@@ -6,24 +6,28 @@ const bodyParser = require('body-parser')
 const app = express()
 const port = 3000
 
+const addressesFile = './data/addresses.json'
+const cartFile = './data/cart.json'
+const catalogFile = './data/catalog.json'
+
 app.use(express.static('./dist'));
 app.use(bodyParser.json())
 
 app.get('/api/good', (req, res) => {
-  fs.readFile('./server/data/catalog.json', 'utf8', (err, data) => {
+  fs.readFile(catalogFile, 'utf8', (err, data) => {
     res.send(data);
   })
 })
 
 app.get('/api/goodc', (req, res) => {
-  fs.readFile('./server/data/cart.json', 'utf8', (err, data) => {
+  fs.readFile(cartFile, 'utf8', (err, data) => {
     res.send(data);
   });
 })
 
 app.put('/api/tocart', (req, res) => {
-  const catalog = JSON.parse(fs.readFileSync('./server/data/catalog.json', 'utf8'));
-  const cart = JSON.parse(fs.readFileSync('./server/data/cart.json', 'utf8'));
+  const catalog = JSON.parse(fs.readFileSync(catalogFile, 'utf8'));
+  const cart = JSON.parse(fs.readFileSync(cartFile, 'utf8'));
 
   const newgoodincart = req.body;
   const goodInCatalog = catalog.find((good) => good.product_id == newgoodincart.product_id);
@@ -39,8 +43,8 @@ app.put('/api/tocart', (req, res) => {
     }
     goodInCatalog.quantity--;
 
-    fs.writeFileSync('./server/data/cart.json', JSON.stringify(cart, null, '\t'));
-    fs.writeFileSync('./server/data/catalog.json', JSON.stringify(catalog, null, '\t'));
+    fs.writeFileSync(cartFile, JSON.stringify(cart, null, '\t'));
+    fs.writeFileSync(catalogFile, JSON.stringify(catalog, null, '\t'));
 
     res.send({ "status": "ok" });
   } else {
@@ -49,8 +53,8 @@ app.put('/api/tocart', (req, res) => {
 })
 
 app.put('/api/poptocart', (req, res) => {
-  const catalog = JSON.parse(fs.readFileSync('./server/data/catalog.json', 'utf8'));
-  let cart = JSON.parse(fs.readFileSync('./server/data/cart.json', 'utf8'));
+  const catalog = JSON.parse(fs.readFileSync(catalogFile, 'utf8'));
+  let cart = JSON.parse(fs.readFileSync(cartFile, 'utf8'));
 
   const goodDel = req.body;
   const goodInCatalog = catalog.findIndex((good) => good.product_id == goodDel.product_id);
@@ -64,8 +68,8 @@ app.put('/api/poptocart', (req, res) => {
     else
       cart.splice(goodInCart, 1);
 
-    fs.writeFileSync('./server/data/cart.json', JSON.stringify(cart, null, '\t'));
-    fs.writeFileSync('./server/data/catalog.json', JSON.stringify(catalog, null, '\t'));
+    fs.writeFileSync(cartFile, JSON.stringify(cart, null, '\t'));
+    fs.writeFileSync(catalogFile, JSON.stringify(catalog, null, '\t'));
 
     res.send({ "status": "ok" });
   } else {
@@ -74,8 +78,8 @@ app.put('/api/poptocart', (req, res) => {
 })
 
 app.put('/api/delfromcart', (req, res) => {
-  const catalog = JSON.parse(fs.readFileSync('./server/data/catalog.json', 'utf8'));
-  let cart = JSON.parse(fs.readFileSync('./server/data/cart.json', 'utf8'));
+  const catalog = JSON.parse(fs.readFileSync(catalogFile, 'utf8'));
+  let cart = JSON.parse(fs.readFileSync(cartFile, 'utf8'));
 
   const goodDel = req.body;
   const goodInCatalog = catalog.findIndex((good) => good.product_id == goodDel.product_id);
@@ -85,8 +89,8 @@ app.put('/api/delfromcart', (req, res) => {
     catalog[goodInCatalog].quantity += cart[goodInCart].in_cart;
     cart.splice(goodInCart, 1);
 
-    fs.writeFileSync('./server/data/cart.json', JSON.stringify(cart, null, '\t'));
-    fs.writeFileSync('./server/data/catalog.json', JSON.stringify(catalog, null, '\t'));
+    fs.writeFileSync(cartFile, JSON.stringify(cart, null, '\t'));
+    fs.writeFileSync(catalogFile, JSON.stringify(catalog, null, '\t'));
 
     res.send({ "status": "ok" });
   } else {
@@ -95,8 +99,8 @@ app.put('/api/delfromcart', (req, res) => {
 })
 
 app.put('/api/resetcart', (req, res) => {
-  const catalog = JSON.parse(fs.readFileSync('./server/data/catalog.json', 'utf8'));
-  let cart = JSON.parse(fs.readFileSync('./server/data/cart.json', 'utf8'));
+  const catalog = JSON.parse(fs.readFileSync(catalogFile, 'utf8'));
+  let cart = JSON.parse(fs.readFileSync(cartFile, 'utf8'));
 
   cart.forEach(cartItem => {
     const goodInCatalog = catalog.find((good) => good.product_id == cartItem.product_id);
@@ -104,19 +108,19 @@ app.put('/api/resetcart', (req, res) => {
   });
 
   cart = [];
-  
-  fs.writeFileSync('./server/data/cart.json', JSON.stringify(cart, null, '\t'));
-  fs.writeFileSync('./server/data/catalog.json', JSON.stringify(catalog, null, '\t'));
-  
+
+  fs.writeFileSync(cartFile, JSON.stringify(cart, null, '\t'));
+  fs.writeFileSync(catalogFile, JSON.stringify(catalog, null, '\t'));
+
   res.send({ "status": "ok" });
 })
 
 app.post('/api/postaddress', (req, res) => {
-  fs.readFile('./server/data/addresses.json', 'utf8', (err, data) => {
+  fs.readFile(addressesFile, 'utf8', (err, data) => {
     const addresses = JSON.parse(data);
     const newaddress = req.body;
     addresses.push(newaddress);
-    fs.writeFile('./server/data/addresses.json', JSON.stringify(addresses, null, '\t'), (err) => {
+    fs.writeFile(addressesFile, JSON.stringify(addresses, null, '\t'), (err) => {
       res.send({ "status": "ok" });
     });
   })
