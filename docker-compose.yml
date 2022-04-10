@@ -1,0 +1,19 @@
+version: "3"
+services:
+  backend:
+    build: backend/
+    ports:
+      - 3000:3000/tcp
+    volumes:
+      - backend_data:/home/dev/backend
+  frontend:
+    build: frontend/
+    ports:
+      - 80:8000/tcp
+    volumes:
+      - frontend_data:/home/dev/frontend
+    depends_on:
+      - backend
+volumes:
+  backend_data:
+  frontend_data:
