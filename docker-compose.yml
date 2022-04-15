@@ -5,15 +5,12 @@ services:
     ports:
       - 3000:3000/tcp
     volumes:
-      - backend_data:/home/dev/backend
+      - ./backend/:/home/dev/
   frontend:
     build: frontend/
     ports:
       - 80:8080/tcp
     volumes:
-      - frontend_data:/home/dev/frontend
+      - ./frontend/:/home/dev/
     depends_on:
       - backend
-volumes:
-  backend_data:
-  frontend_data:

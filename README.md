@@ -1,11 +1,11 @@
 # vuexproject
 
-## Build image
+## Build services
 ```
-docker build -f Dockerfile -t vuexproject .
+docker-compose build
 ```
 
-## Run container
+## Run services
 ```
-docker run -d -p 80:8080 -p 3000:3000 vuexproject
+docker-compose up -d
 ```
