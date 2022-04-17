@@ -14,3 +14,5 @@ services:
       - ./frontend/:/home/dev/
     depends_on:
       - backend
+    links:
+      - backend
